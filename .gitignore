@@ -1,0 +1,17 @@
+# ASP.NET
+bin/
+obj/
+*.user
+*.suo
+*.log
+appsettings.Development.json
+
+# Node / React
+node_modules/
+build/
+dist/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
