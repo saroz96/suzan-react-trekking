@@ -5,7 +5,7 @@ using backend.Models;
 
 namespace backend.Data;
 
-public class ApplicationDbContext : IdentityDbContext<AppUser>
+public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole, string>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -26,6 +26,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public DbSet<TripDepartureDate> TripDepartureDates { get; set; }
     public DbSet<TripGroupDiscount> TripGroupDiscounts { get; set; }
     public DbSet<Country> Countries { get; set; }
+
+    public DbSet<TrekPackageReview> TrekPackageReviews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -228,5 +230,54 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
                     .HasForeignKey(t => t.CountryId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+        // ========== TREK PACKAGE REVIEW CONFIGURATION ==========
+        builder.Entity<TrekPackageReview>(entity =>
+        {
+            // Primary key
+            entity.HasKey(e => e.Id);
+
+            // Properties configuration
+            entity.Property(e => e.Rating)
+                .IsRequired();
+
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.Property(e => e.Comment)
+                .IsRequired()
+                .HasMaxLength(2000);
+
+            entity.Property(e => e.UserAvatar)
+                .HasMaxLength(10);
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // Relationships
+            entity.HasOne(e => e.TrekPackage)
+                .WithMany(p => p.Reviews)
+                .HasForeignKey(e => e.TrekPackageId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.Reviews)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Indexes for better performance
+            entity.HasIndex(e => e.TrekPackageId);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.Rating);
+            entity.HasIndex(e => e.CreatedAt);
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => e.IsApproved);
+
+            // Composite indexes
+            entity.HasIndex(e => new { e.TrekPackageId, e.IsApproved, e.IsActive });
+            entity.HasIndex(e => new { e.UserId, e.TrekPackageId }).IsUnique(); // Prevent duplicate reviews from same user
+            entity.HasIndex(e => new { e.Rating, e.IsApproved });
+        });
     }
 }

@@ -93,40 +93,6 @@ const TopSellersSection: React.FC = () => {
     fetchTopSellerPackages();
   }, []);
 
-  // const fetchTopSellerPackages = async () => {
-  //   try {
-  //     setLoading(true);
-  //     setError(null);
-
-  //     // Fetch all packages with seller status
-  //     const response = await api.get("/api/TrekPackage");
-
-  //     // Filter packages that are top sellers
-  //     const topSellers = response.data.filter(
-  //       (pkg: TrekPackage) => pkg.isTopSeller === true,
-  //     );
-
-  //     // Sort by latest created first (newest first)
-  //     topSellers.sort((a: TrekPackage, b: TrekPackage) => {
-  //       return (
-  //         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  //       );
-  //     });
-
-  //     // Only take the latest 8 packages
-  //     const latestTopSellers = topSellers.slice(0, 8);
-
-  //     setPackages(latestTopSellers);
-  //   } catch (error: any) {
-  //     console.error("Error fetching top seller packages:", error);
-  //     setError(
-  //       error.response?.data?.message || "Error loading top seller packages",
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchTopSellerPackages = async () => {
     try {
       setLoading(true);

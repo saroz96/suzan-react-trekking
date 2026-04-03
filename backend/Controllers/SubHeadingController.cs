@@ -411,7 +411,7 @@ namespace backend.Controllers
                 foreach (var heading in headings)
                 {
                     var subHeadings = await _context.SubHeadings
-                        .Where(sh => sh.HeadingId == heading.Id && sh.IsActive)
+                        .Where(sh => sh.HeadingId == heading.Id)
                         .OrderBy(sh => sh.DisplayOrder)
                         .ThenBy(sh => sh.Name)
                         .ToListAsync();

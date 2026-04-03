@@ -218,6 +218,9 @@ namespace backend.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("UserType")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -533,6 +536,82 @@ namespace backend.Migrations
                     b.HasIndex("SubHeadingId");
 
                     b.ToTable("TrekPackages");
+                });
+
+            modelBuilder.Entity("backend.Models.TrekPackageReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("Helpful")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("TrekPackageId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserAvatar")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("IsApproved");
+
+                    b.HasIndex("Rating");
+
+                    b.HasIndex("TrekPackageId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Rating", "IsApproved");
+
+                    b.HasIndex("UserId", "TrekPackageId")
+                        .IsUnique();
+
+                    b.HasIndex("TrekPackageId", "IsApproved", "IsActive");
+
+                    b.ToTable("TrekPackageReviews");
                 });
 
             modelBuilder.Entity("backend.Models.TripCostExclude", b =>
@@ -974,6 +1053,25 @@ namespace backend.Migrations
                     b.Navigation("SubHeading");
                 });
 
+            modelBuilder.Entity("backend.Models.TrekPackageReview", b =>
+                {
+                    b.HasOne("backend.Models.TrekPackage", "TrekPackage")
+                        .WithMany("Reviews")
+                        .HasForeignKey("TrekPackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.AppUser", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TrekPackage");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Models.TripCostExclude", b =>
                 {
                     b.HasOne("backend.Models.TrekPackage", "TrekPackage")
@@ -1062,6 +1160,11 @@ namespace backend.Migrations
                     b.Navigation("TrekPackage");
                 });
 
+            modelBuilder.Entity("backend.Models.AppUser", b =>
+                {
+                    b.Navigation("Reviews");
+                });
+
             modelBuilder.Entity("backend.Models.Country", b =>
                 {
                     b.Navigation("TrekPackages");
@@ -1082,6 +1185,8 @@ namespace backend.Migrations
                     b.Navigation("GroupDiscounts");
 
                     b.Navigation("Itinerary");
+
+                    b.Navigation("Reviews");
 
                     b.Navigation("SliderImages");
                 });

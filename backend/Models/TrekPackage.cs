@@ -90,6 +90,7 @@ namespace backend.Models
         public virtual ICollection<TripFAQ> Faqs { get; set; } = new List<TripFAQ>();
         public virtual ICollection<TripDepartureDate> DepartureDates { get; set; } = new List<TripDepartureDate>();
         public virtual ICollection<TripGroupDiscount> GroupDiscounts { get; set; } = new List<TripGroupDiscount>();
+         public virtual ICollection<TrekPackageReview> Reviews { get; set; } = new List<TrekPackageReview>();
         // --- Route Map ---
         public string? RouteMapImageUrl { get; set; }
 

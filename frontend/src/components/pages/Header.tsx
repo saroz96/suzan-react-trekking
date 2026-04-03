@@ -122,34 +122,6 @@ const Header = ({ user, onLogout }: HeaderProps) => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  // const fetchMenuData = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const [mainHeadingsRes, headingsRes, subHeadingsRes] = await Promise.all([
-  //       api.get("/api/MainHeading").catch(() => ({ data: [] })),
-  //       api.get("/api/Heading").catch(() => ({ data: [] })),
-  //       api.get("/api/SubHeading").catch(() => ({ data: [] })),
-  //     ]);
-
-  //     setMainHeadings(mainHeadingsRes.data || []);
-  //     setHeadings(headingsRes.data || []);
-  //     setSubHeadings(subHeadingsRes.data || []);
-  //   } catch (error) {
-  //     console.error("Error fetching menu data:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const fetchAllPackages = async () => {
-  //   try {
-  //     const response = await api.get("/api/TrekPackage");
-  //     setAllPackages(response.data || []);
-  //   } catch (error) {
-  //     console.error("Error fetching packages:", error);
-  //   }
-  // };
-
   const fetchMenuData = async () => {
     try {
       setLoading(true);
@@ -196,23 +168,6 @@ const Header = ({ user, onLogout }: HeaderProps) => {
       console.error("Error fetching packages:", error);
     }
   };
-
-  // const performSearch = () => {
-  //   if (!searchQuery.trim()) return;
-
-  //   setSearchLoading(true);
-  //   const query = searchQuery.toLowerCase().trim();
-
-  //   const results = allPackages.filter(
-  //     (pkg) =>
-  //       pkg.name.toLowerCase().includes(query) ||
-  //       pkg.shortDescription?.toLowerCase().includes(query),
-  //   );
-
-  //   setSearchResults(results.slice(0, 10)); // Limit to 10 results
-  //   setShowSearchResults(true);
-  //   setSearchLoading(false);
-  // };
 
   const performSearch = () => {
     if (!searchQuery.trim()) return;
@@ -732,15 +687,15 @@ const Header = ({ user, onLogout }: HeaderProps) => {
 
       {/* Add animation for slideIn */}
       <style>{`
-        @keyframes slideIn {
-          from {
-            transform: translateX(-100%);
+          @keyframes slideIn {
+            from {
+              transform: translateX(-100%);
+            }
+            to {
+              transform: translateX(0);
+            }
           }
-          to {
-            transform: translateX(0);
-          }
-        }
-      `}</style>
+        `}</style>
     </nav>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import NotificationToast from "../NotificationToast";
+import Footer from "./Footer";
 
 // Types
 interface TrekPackage {
@@ -700,24 +701,7 @@ const AllTopSellersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Need Help Section */}
-      <div style={styles.needHelp}>
-        <div style={styles.needHelpContent}>
-          <h3 style={styles.needHelpTitle}>Need Help Choosing?</h3>
-          <p style={styles.needHelpText}>
-            Our trekking experts are here to help you find the perfect trek for
-            your adventure.
-          </p>
-          <div style={styles.contactButtons}>
-            <a href="tel:+9779851175531" style={styles.phoneButton}>
-              📞 Call Us: +977 9851175531
-            </a>
-            <a href="/contact" style={styles.emailButton}>
-              ✉️ Contact Us
-            </a>
-          </div>
-        </div>
-      </div>
+      <Footer />
 
       <NotificationToast
         show={notification.show}
