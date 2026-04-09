@@ -2335,7 +2335,7 @@ const TrekPackageManager: React.FC = () => {
                                   "discountedPrice",
                                   e.target.value
                                     ? parseFloat(e.target.value)
-                                    : null,
+                                    : 0,
                                 )
                               }
                               style={styles.input}
@@ -2564,7 +2564,7 @@ const TrekPackageManager: React.FC = () => {
                                   "discountPercentage",
                                   e.target.value
                                     ? parseFloat(e.target.value)
-                                    : undefined,
+                                    : 0,
                                 )
                               }
                               style={styles.input}
