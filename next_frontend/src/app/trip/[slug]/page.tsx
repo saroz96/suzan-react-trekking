@@ -343,6 +343,9 @@ const TripDetailsPage: React.FC = () => {
   }, [showGalleryModal, tripData?.galleryImages]);
 
   const getNavItems = (): NavItem[] => {
+    if (!tripData) {
+      return [];
+    }
     const items: NavItem[] = [
       { id: "overview", label: "Overview", icon: "📖" },
     ];
