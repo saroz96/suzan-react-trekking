@@ -3,8 +3,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy csproj and restore dependencies
-COPY ["suzan-react-trekking.csproj", "."]
-RUN dotnet restore "./suzan-react-trekking.csproj"
+COPY ["backend.csproj", "."]
+RUN dotnet restore "./backend.csproj"
 
 # Copy everything else and build
 COPY . .
