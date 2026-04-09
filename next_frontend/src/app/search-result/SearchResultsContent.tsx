@@ -63,7 +63,7 @@ interface FilterOptions {
   month?: string;
 }
 
-const SearchResultsPage: React.FC = () => {
+const SearchResultsContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams?.get("q") || "";
@@ -1258,4 +1258,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-export default SearchResultsPage;
+export default SearchResultsContent;

@@ -8,7 +8,7 @@ import Image from "next/image";
 import axios from "axios";
 import Footer from "@/pages/Footer";
 
-const UserLoginPage: React.FC = () => {
+const LoginContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams?.get("redirect") || "/";
@@ -510,4 +510,4 @@ const UserLoginPage: React.FC = () => {
   );
 };
 
-export default UserLoginPage;
+export default LoginContent;
