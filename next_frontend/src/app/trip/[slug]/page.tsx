@@ -383,7 +383,7 @@ const TripDetailsPage: React.FC = () => {
   };
 
   const scrollToSection = (sectionId: string) => {
-    const sectionRefs: { [key: string]: React.RefObject<HTMLDivElement> } = {
+    const sectionRefs: { [key: string]: React.RefObject<HTMLDivElement | null> } = {
       overview: overviewRef,
       gallery: galleryRef,
       itinerary: itineraryRef,
