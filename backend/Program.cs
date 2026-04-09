@@ -352,112 +352,112 @@ app.UseAuthorization();
 app.MapControllers();
 
 // ✅ ADD THIS SECTION: Auto-migrate database on startup
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    try
-    {
-        Console.WriteLine("🔄 Checking for pending database migrations...");
+// using (var scope = app.Services.CreateScope())
+// {
+//     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//     try
+//     {
+//         Console.WriteLine("🔄 Checking for pending database migrations...");
 
-        // Check if there are pending migrations
-        var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-        var pendingMigrationsList = pendingMigrations.ToList();
+//         // Check if there are pending migrations
+//         var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+//         var pendingMigrationsList = pendingMigrations.ToList();
 
-        if (pendingMigrationsList.Any())
-        {
-            Console.WriteLine($"📋 Found {pendingMigrationsList.Count} pending migrations:");
-            foreach (var migration in pendingMigrationsList)
-            {
-                Console.WriteLine($"   - {migration}");
-            }
+//         if (pendingMigrationsList.Any())
+//         {
+//             Console.WriteLine($"📋 Found {pendingMigrationsList.Count} pending migrations:");
+//             foreach (var migration in pendingMigrationsList)
+//             {
+//                 Console.WriteLine($"   - {migration}");
+//             }
 
-            Console.WriteLine("🔄 Applying migrations...");
-            await dbContext.Database.MigrateAsync();
-            Console.WriteLine("✅ Database migrations applied successfully!");
-        }
-        else
-        {
-            Console.WriteLine("✅ No pending migrations. Database is up to date.");
-        }
+//             Console.WriteLine("🔄 Applying migrations...");
+//             await dbContext.Database.MigrateAsync();
+//             Console.WriteLine("✅ Database migrations applied successfully!");
+//         }
+//         else
+//         {
+//             Console.WriteLine("✅ No pending migrations. Database is up to date.");
+//         }
 
-        // Verify database connection
-        var canConnect = await dbContext.Database.CanConnectAsync();
-        Console.WriteLine($"📊 Database connection: {(canConnect ? "Successful" : "Failed")}");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Error applying migrations: {ex.Message}");
-        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+//         // Verify database connection
+//         var canConnect = await dbContext.Database.CanConnectAsync();
+//         Console.WriteLine($"📊 Database connection: {(canConnect ? "Successful" : "Failed")}");
+//     }
+//     catch (Exception ex)
+//     {
+//         Console.WriteLine($"❌ Error applying migrations: {ex.Message}");
+//         Console.WriteLine($"Stack trace: {ex.StackTrace}");
 
-        // Log inner exception if exists
-        if (ex.InnerException != null)
-        {
-            Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
-        }
+//         // Log inner exception if exists
+//         if (ex.InnerException != null)
+//         {
+//             Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+//         }
 
-        // Re-throw to fail the deployment if migrations fail
-        throw;
-    }
-}
+//         // Re-throw to fail the deployment if migrations fail
+//         throw;
+//     }
+// }
 
 // Seed Roles and Admin User
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+// using (var scope = app.Services.CreateScope())
+// {
+//     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-    // Create roles
-    string[] roleNames = { "Admin", "Customer" };
-    foreach (var roleName in roleNames)
-    {
-        if (!await roleManager.RoleExistsAsync(roleName))
-        {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
-            Console.WriteLine($"✅ Role '{roleName}' created");
-        }
-        else
-        {
-            Console.WriteLine($"ℹ️ Role '{roleName}' already exists");
-        }
-    }
+//     // Create roles
+//     string[] roleNames = { "Admin", "Customer" };
+//     foreach (var roleName in roleNames)
+//     {
+//         if (!await roleManager.RoleExistsAsync(roleName))
+//         {
+//             await roleManager.CreateAsync(new IdentityRole(roleName));
+//             Console.WriteLine($"✅ Role '{roleName}' created");
+//         }
+//         else
+//         {
+//             Console.WriteLine($"ℹ️ Role '{roleName}' already exists");
+//         }
+//     }
 
-    // Create admin user if not exists
-    var adminEmail = "admin@example.com";
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
-    {
-        adminUser = new AppUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            Name = "Administrator",
-            UserType = "Admin",
-            CreatedAt = DateTime.UtcNow,
-            IsActive = true
-        };
+//     // Create admin user if not exists
+//     var adminEmail = "admin@example.com";
+//     var adminUser = await userManager.FindByEmailAsync(adminEmail);
+//     if (adminUser == null)
+//     {
+//         adminUser = new AppUser
+//         {
+//             UserName = adminEmail,
+//             Email = adminEmail,
+//             Name = "Administrator",
+//             UserType = "Admin",
+//             CreatedAt = DateTime.UtcNow,
+//             IsActive = true
+//         };
 
-        var result = await userManager.CreateAsync(adminUser, "Admin@123");
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(adminUser, "Admin");
-            Console.WriteLine("✅ Admin user created: admin@example.com / Admin@123");
-        }
-        else
-        {
-            Console.WriteLine($"❌ Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-        }
-    }
-    else
-    {
-        Console.WriteLine("ℹ️ Admin user already exists");
+//         var result = await userManager.CreateAsync(adminUser, "Admin@123");
+//         if (result.Succeeded)
+//         {
+//             await userManager.AddToRoleAsync(adminUser, "Admin");
+//             Console.WriteLine("✅ Admin user created: admin@example.com / Admin@123");
+//         }
+//         else
+//         {
+//             Console.WriteLine($"❌ Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+//         }
+//     }
+//     else
+//     {
+//         Console.WriteLine("ℹ️ Admin user already exists");
 
-        // Ensure admin user has Admin role
-        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
-        {
-            await userManager.AddToRoleAsync(adminUser, "Admin");
-            Console.WriteLine("✅ Added Admin role to existing admin user");
-        }
-    }
-}
+//         // Ensure admin user has Admin role
+//         if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+//         {
+//             await userManager.AddToRoleAsync(adminUser, "Admin");
+//             Console.WriteLine("✅ Added Admin role to existing admin user");
+//         }
+//     }
+// }
 
 app.Run();
