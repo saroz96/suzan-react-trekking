@@ -286,6 +286,37 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             )}
             <span className={`arrow ${isExpanded ? "expanded" : ""}`}>▼</span>
           </div>
+          {/* {isExpanded && item.children && (
+            <ul className="submenu">
+              {item.children.map((child, childIndex) => {
+                const isChildActive = pathname === child.path;
+                return (
+                  <li key={childIndex}>
+                    <Link
+                      href={child.path}
+                      className={`submenu-link ${isChildActive ? "active" : ""}`}
+                      onClick={isMobile ? onClose : undefined}
+                      prefetch={false}
+                    >
+                      <span className="menu-icon">{child.icon}</span>
+                      <span className="menu-text">{child.name}</span>
+                      {child.badge && (
+                        <span
+                          className="badge small"
+                          style={{
+                            backgroundColor: child.badgeColor || "#e67e22",
+                          }}
+                        >
+                          {child.badge}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )} */}
+
           {isExpanded && item.children && (
             <ul className="submenu">
               {item.children.map((child, childIndex) => {
