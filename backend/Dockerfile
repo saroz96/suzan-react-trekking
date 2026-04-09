@@ -4,20 +4,20 @@ WORKDIR /src
 
 # Copy csproj and restore dependencies
 COPY ["backend.csproj", "."]
-RUN dotnet restore "./backend.csproj"
+RUN dotnet restore "backend.csproj"
 
 # Copy everything else and build
 COPY . .
-RUN dotnet publish "./suzan-react-trekking.csproj" -c Release -o /app/publish
+RUN dotnet publish "backend.csproj" -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Copy published files from build stage
+# Copy published files
 COPY --from=build /app/publish .
 
-# Expose ports
+# Expose port
 EXPOSE 8080
 EXPOSE 8081
 
@@ -26,4 +26,4 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://+:8080
 
 # Start the application
-ENTRYPOINT ["dotnet", "suzan-react-trekking.dll"]
+ENTRYPOINT ["dotnet", "backend.dll"]
