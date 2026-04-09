@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
 import NotificationToast from "@/NotificationToast";
-import Sidebar from "@/pages/admin/Sidebar";
+import Sidebar from "@/app/components/admin/Sidebar";
 
 // Types
 interface MainHeading {
@@ -2335,7 +2335,7 @@ const TrekPackageManager: React.FC = () => {
                                   "discountedPrice",
                                   e.target.value
                                     ? parseFloat(e.target.value)
-                                    : undefined,
+                                    : 0,
                                 )
                               }
                               style={styles.input}
@@ -2564,7 +2564,7 @@ const TrekPackageManager: React.FC = () => {
                                   "discountPercentage",
                                   e.target.value
                                     ? parseFloat(e.target.value)
-                                    : undefined,
+                                    : 0,
                                 )
                               }
                               style={styles.input}

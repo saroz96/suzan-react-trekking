@@ -3184,6 +3184,17 @@ interface NavItem {
 const TripDetailsPage: React.FC = () => {
   const params = useParams();
   const router = useRouter();
+  if (!params) {
+    return (
+      <div className="trip-details-container">
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Loading...</p>
+        </div>
+        <style jsx>{styles}</style>
+      </div>
+    );
+  }
   const slug = params.slug as string;
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -3342,6 +3353,9 @@ const TripDetailsPage: React.FC = () => {
   }, [showGalleryModal, tripData?.galleryImages]);
 
   const getNavItems = (): NavItem[] => {
+    if (!tripData) {
+      return [];
+    }
     const items: NavItem[] = [
       { id: "overview", label: "Overview", icon: "📖" },
     ];
@@ -3379,7 +3393,7 @@ const TripDetailsPage: React.FC = () => {
   };
 
   const scrollToSection = (sectionId: string) => {
-    const sectionRefs: { [key: string]: React.RefObject<HTMLDivElement> } = {
+    const sectionRefs: { [key: string]: React.RefObject<HTMLDivElement | null> } = {
       overview: overviewRef,
       gallery: galleryRef,
       itinerary: itineraryRef,
@@ -3757,7 +3771,7 @@ const TripDetailsPage: React.FC = () => {
       } else {
         alert(
           error.response?.data?.message ||
-            "Error submitting review. Please try again.",
+          "Error submitting review. Please try again.",
         );
       }
     } finally {
@@ -4249,50 +4263,50 @@ const TripDetailsPage: React.FC = () => {
             {/* Cost Details Section */}
             {(tripData.costIncludes?.length > 0 ||
               tripData.costExcludes?.length > 0) && (
-              <div ref={costDetailsRef}>
-                <section className="section">
-                  <h2 className="section-title">Cost Details</h2>
-                  <div className="cost-grid">
-                    {tripData.costIncludes?.length > 0 && (
-                      <div>
-                        <h3 className="sub-title">✓ What's Included</h3>
-                        <ul className="list">
-                          {tripData.costIncludes.map((item) => (
-                            <li key={item.id} className="list-item">
-                              <span className="include-icon">✓</span>{" "}
-                              {item.description}
-                              {item.category && (
-                                <span className="category-badge">
-                                  {item.category}
-                                </span>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {tripData.costExcludes?.length > 0 && (
-                      <div>
-                        <h3 className="sub-title">✗ What's Not Included</h3>
-                        <ul className="list">
-                          {tripData.costExcludes.map((item) => (
-                            <li key={item.id} className="list-item">
-                              <span className="exclude-icon">✗</span>{" "}
-                              {item.description}
-                              {item.category && (
-                                <span className="category-badge">
-                                  {item.category}
-                                </span>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </section>
-              </div>
-            )}
+                <div ref={costDetailsRef}>
+                  <section className="section">
+                    <h2 className="section-title">Cost Details</h2>
+                    <div className="cost-grid">
+                      {tripData.costIncludes?.length > 0 && (
+                        <div>
+                          <h3 className="sub-title">✓ What's Included</h3>
+                          <ul className="list">
+                            {tripData.costIncludes.map((item) => (
+                              <li key={item.id} className="list-item">
+                                <span className="include-icon">✓</span>{" "}
+                                {item.description}
+                                {item.category && (
+                                  <span className="category-badge">
+                                    {item.category}
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {tripData.costExcludes?.length > 0 && (
+                        <div>
+                          <h3 className="sub-title">✗ What's Not Included</h3>
+                          <ul className="list">
+                            {tripData.costExcludes.map((item) => (
+                              <li key={item.id} className="list-item">
+                                <span className="exclude-icon">✗</span>{" "}
+                                {item.description}
+                                {item.category && (
+                                  <span className="category-badge">
+                                    {item.category}
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                </div>
+              )}
 
             {/* Dates & Price Section - Alternative Card Design */}
             {tripData.departureDates && tripData.departureDates.length > 0 && (
@@ -4370,10 +4384,10 @@ const TripDetailsPage: React.FC = () => {
                   {tripData.departureDates.filter(
                     (d) => new Date(d.startDate) > new Date(),
                   ).length > 6 && (
-                    <button className="view-all-dates-btn">
-                      View All Dates →
-                    </button>
-                  )}
+                      <button className="view-all-dates-btn">
+                        View All Dates →
+                      </button>
+                    )}
                 </section>
               </div>
             )}
@@ -4466,7 +4480,7 @@ const TripDetailsPage: React.FC = () => {
                   {[5, 4, 3, 2, 1].map((rating) => {
                     const count =
                       reviewStats.ratingDistribution[
-                        rating as keyof typeof reviewStats.ratingDistribution
+                      rating as keyof typeof reviewStats.ratingDistribution
                       ];
                     const percentage =
                       reviewStats.totalReviews > 0
@@ -4519,7 +4533,7 @@ const TripDetailsPage: React.FC = () => {
                     {rating} ★ (
                     {
                       reviewStats.ratingDistribution[
-                        rating as keyof typeof reviewStats.ratingDistribution
+                      rating as keyof typeof reviewStats.ratingDistribution
                       ]
                     }
                     )
@@ -4971,10 +4985,10 @@ const TripDetailsPage: React.FC = () => {
                 )}
                 {tripData.galleryImages[currentModalImageIndex]
                   ?.description && (
-                  <p className="modal-description">
-                    {tripData.galleryImages[currentModalImageIndex].description}
-                  </p>
-                )}
+                    <p className="modal-description">
+                      {tripData.galleryImages[currentModalImageIndex].description}
+                    </p>
+                  )}
                 <div className="modal-counter">
                   {currentModalImageIndex + 1} / {tripData.galleryImages.length}
                 </div>

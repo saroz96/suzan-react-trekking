@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import NotificationToast from "@/NotificationToast";
-import Sidebar from "@/pages/admin/Sidebar";
+import Sidebar from "@/app/components/admin/Sidebar";
 // import Sidebar from "@/components/Sidebar";
 // import NotificationToast from "@/components/NotificationToast";
 

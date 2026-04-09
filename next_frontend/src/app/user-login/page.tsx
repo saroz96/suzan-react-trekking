@@ -11,7 +11,7 @@ import Footer from "@/pages/Footer";
 const UserLoginPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/";
+  const redirectUrl = searchParams?.get("redirect") || "/";
 
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);

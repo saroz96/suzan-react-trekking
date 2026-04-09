@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import Sidebar from "@/pages/admin/Sidebar";
+import Sidebar from "@/app/components/admin/Sidebar";
 // import Sidebar from "@/components/Sidebar"; // Fixed import path
 
 const Dashboard: React.FC = () => {

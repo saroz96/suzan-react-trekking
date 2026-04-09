@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/pages/admin/Sidebar";
+import Sidebar from "@/app/components/admin/Sidebar";
 import NotificationToast from "@/NotificationToast";
 
 interface MainHeading {

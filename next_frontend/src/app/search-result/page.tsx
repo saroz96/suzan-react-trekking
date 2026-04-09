@@ -1280,7 +1280,7 @@ interface FilterOptions {
 const SearchResultsPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const query = searchParams.get("q") || "";
+  const query = searchParams?.get("q") || "";
 
   const [packages, setPackages] = useState<TrekPackage[]>([]);
   const [filteredPackages, setFilteredPackages] = useState<TrekPackage[]>([]);

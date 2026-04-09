@@ -77,6 +77,16 @@ interface TrekPackage {
 
 const PackageListBySubHeading: React.FC = () => {
   const params = useParams();
+
+  if (!params) {
+    return <div className="package-list-container">
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading...</p>
+      </div>
+      <style jsx>{styles}</style>
+    </div>;
+  }
   const mainHeading = params.mainHeading as string;
   const heading = params.heading as string;
   const subHeading = params.subHeading as string;

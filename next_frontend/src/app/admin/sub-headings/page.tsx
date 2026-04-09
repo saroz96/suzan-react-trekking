@@ -2099,7 +2099,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
 import NotificationToast from "@/NotificationToast";
-import Sidebar from "@/pages/admin/Sidebar";
+import Sidebar from "@/app/components/admin/Sidebar";
 
 // Types
 interface MainHeading {
