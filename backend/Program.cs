@@ -39,7 +39,7 @@
 //         ValidateLifetime = true,
 //         ClockSkew = TimeSpan.Zero
 //     };
-    
+
 //     // CRITICAL: Add this to handle token from Authorization header correctly
 //     options.Events = new JwtBearerEvents
 //     {
@@ -47,7 +47,7 @@
 //         {
 //             var accessToken = context.Request.Query["access_token"];
 //             var path = context.HttpContext.Request.Path;
-            
+
 //             // Check for token in Authorization header (this is the standard way)
 //             var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
 //             if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
@@ -59,7 +59,7 @@
 //             {
 //                 context.Token = accessToken;
 //             }
-            
+
 //             return Task.CompletedTask;
 //         },
 //         OnAuthenticationFailed = context =>
@@ -112,7 +112,7 @@
 
 //     // User settings
 //     options.User.RequireUniqueEmail = true;
-    
+
 //     // Sign-in settings
 //     options.SignIn.RequireConfirmedAccount = false;
 //     options.SignIn.RequireConfirmedEmail = false;
@@ -239,7 +239,7 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
-    
+
     // CRITICAL: Add this to handle token from Authorization header correctly
     options.Events = new JwtBearerEvents
     {
@@ -247,7 +247,7 @@ builder.Services.AddAuthentication(options =>
         {
             var accessToken = context.Request.Query["access_token"];
             var path = context.HttpContext.Request.Path;
-            
+
             // Check for token in Authorization header (this is the standard way)
             var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
             if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
@@ -259,7 +259,7 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Token = accessToken;
             }
-            
+
             return Task.CompletedTask;
         },
         OnAuthenticationFailed = context =>
@@ -283,7 +283,8 @@ builder.Services.AddCors(options =>
                 "http://localhost:5173",
                 "http://localhost:5174",
                 "http://localhost:3000",
-                "https://suzan-react-trekking-n9bb.vercel.app"  // Add your Vercel frontend URL
+                "https://suzan-react-trekking.vercel.app",
+                "https://suzan-react-trekking-n9bb.vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -313,7 +314,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 
     // User settings
     options.User.RequireUniqueEmail = true;
-    
+
     // Sign-in settings
     options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;
@@ -357,11 +358,11 @@ using (var scope = app.Services.CreateScope())
     try
     {
         Console.WriteLine("🔄 Checking for pending database migrations...");
-        
+
         // Check if there are pending migrations
         var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
         var pendingMigrationsList = pendingMigrations.ToList();
-        
+
         if (pendingMigrationsList.Any())
         {
             Console.WriteLine($"📋 Found {pendingMigrationsList.Count} pending migrations:");
@@ -369,7 +370,7 @@ using (var scope = app.Services.CreateScope())
             {
                 Console.WriteLine($"   - {migration}");
             }
-            
+
             Console.WriteLine("🔄 Applying migrations...");
             await dbContext.Database.MigrateAsync();
             Console.WriteLine("✅ Database migrations applied successfully!");
@@ -378,7 +379,7 @@ using (var scope = app.Services.CreateScope())
         {
             Console.WriteLine("✅ No pending migrations. Database is up to date.");
         }
-        
+
         // Verify database connection
         var canConnect = await dbContext.Database.CanConnectAsync();
         Console.WriteLine($"📊 Database connection: {(canConnect ? "Successful" : "Failed")}");
@@ -387,13 +388,13 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine($"❌ Error applying migrations: {ex.Message}");
         Console.WriteLine($"Stack trace: {ex.StackTrace}");
-        
+
         // Log inner exception if exists
         if (ex.InnerException != null)
         {
             Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
         }
-        
+
         // Re-throw to fail the deployment if migrations fail
         throw;
     }
@@ -449,7 +450,7 @@ using (var scope = app.Services.CreateScope())
     else
     {
         Console.WriteLine("ℹ️ Admin user already exists");
-        
+
         // Ensure admin user has Admin role
         if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
