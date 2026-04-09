@@ -2521,7 +2521,7 @@ const TrekPackageManager: React.FC = () => {
                                   index,
                                   "maxTravelers",
                                   parseInt(e.target.value) ||
-                                    discount.minTravelers,
+                                  discount.minTravelers,
                                 )
                               }
                               style={styles.input}

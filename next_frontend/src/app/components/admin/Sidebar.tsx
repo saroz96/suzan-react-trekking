@@ -1,6 +1,6 @@
 // "use client";
 
-// import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect, useCallback, memo, useRef } from "react";
 // import { useRouter, usePathname } from "next/navigation";
 // import Link from "next/link";
 // import { useAuth } from "@/hooks/useAuth";
@@ -26,15 +26,33 @@
 //   const pathname = usePathname();
 //   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 //   const [isMobile, setIsMobile] = useState(false);
-//   const [windowWidth, setWindowWidth] = useState(0);
+//   const prevPathnameRef = useRef<string>(pathname);
+
+//   // Load expanded menus from localStorage on mount
+//   useEffect(() => {
+//     const savedExpandedMenus = localStorage.getItem("sidebarExpandedMenus");
+//     if (savedExpandedMenus) {
+//       try {
+//         const parsed = JSON.parse(savedExpandedMenus);
+//         setExpandedMenus(parsed);
+//       } catch (e) {
+//         console.error("Error loading expanded menus:", e);
+//       }
+//     }
+//   }, []);
+
+//   // Save expanded menus to localStorage when they change
+//   useEffect(() => {
+//     localStorage.setItem("sidebarExpandedMenus", JSON.stringify(expandedMenus));
+//   }, [expandedMenus]);
 
 //   // Handle window resize
 //   useEffect(() => {
 //     const handleResize = () => {
 //       const width = window.innerWidth;
-//       setWindowWidth(width);
 //       const isMobileView = width <= 768;
 //       setIsMobile(isMobileView);
+
 //       if (!isMobileView && !isOpen) {
 //         onClose();
 //       }
@@ -44,6 +62,38 @@
 //     window.addEventListener("resize", handleResize);
 //     return () => window.removeEventListener("resize", handleResize);
 //   }, [isOpen, onClose]);
+
+//   // Auto-expand menus based on current path
+//   useEffect(() => {
+//     const menuItems = getMenuItems();
+//     const newExpandedMenus: string[] = [];
+
+//     // Check which menus should be expanded based on current path
+//     const checkAndExpand = (items: MenuItem[]) => {
+//       items.forEach((item) => {
+//         if (item.children) {
+//           // Check if any child path matches current path
+//           const hasActiveChild = item.children.some(
+//             (child) => pathname === child.path,
+//           );
+//           if (hasActiveChild && !expandedMenus.includes(item.name)) {
+//             newExpandedMenus.push(item.name);
+//           }
+//           // Recursively check children
+//           checkAndExpand(item.children);
+//         }
+//       });
+//     };
+
+//     checkAndExpand(menuItems);
+
+//     if (newExpandedMenus.length > 0) {
+//       setExpandedMenus((prev) => {
+//         const combined = [...new Set([...prev, ...newExpandedMenus])];
+//         return combined;
+//       });
+//     }
+//   }, [pathname]);
 
 //   // Close sidebar when clicking outside on mobile
 //   useEffect(() => {
@@ -67,132 +117,148 @@
 //     return () => document.removeEventListener("mousedown", handleClickOutside);
 //   }, [isMobile, isOpen, onClose]);
 
-//   const toggleSubmenu = (menuName: string) => {
+//   const toggleSubmenu = useCallback((menuName: string) => {
 //     setExpandedMenus((prev) =>
 //       prev.includes(menuName)
 //         ? prev.filter((item) => item !== menuName)
 //         : [...prev, menuName],
 //     );
-//   };
+//   }, []);
 
-//   const handleLogout = async () => {
+//   const handleLogout = useCallback(async () => {
 //     await logout();
 //     router.push("/login");
-//   };
+//   }, [logout, router]);
 
-//   const menuItems: MenuItem[] = [
-//     {
-//       path: "/admin/dashboard",
-//       name: "Dashboard",
-//       icon: "📊",
-//     },
-//     {
-//       path: "/admin/content",
-//       name: "Menu Management",
-//       icon: "📑",
-//       children: [
-//         { path: "/admin/menu", name: "Main Headings", icon: "📑" },
-//         { path: "/admin/headings", name: "Headings", icon: "📑" },
-//         { path: "/admin/sub-headings", name: "Sub Headings", icon: "📑" },
-//       ],
-//     },
-//     {
-//       path: "/admin/treks",
-//       name: "Treks Management",
-//       icon: "🏔️",
-//       children: [
-//         { path: "/admin/trek-package", name: "Treks Package", icon: "🗂️" },
-//         { path: "/admin/country", name: "Country", icon: "➕" },
-//         { path: "/admin/treks/categories", name: "Categories", icon: "📑" },
-//         { path: "/admin/treks/destinations", name: "Destinations", icon: "📍" },
-//       ],
-//     },
-//     {
-//       path: "/admin/bookings",
-//       name: "Bookings",
-//       icon: "📅",
-//       badge: "12",
-//       badgeColor: "#e67e22",
-//       children: [
-//         { path: "/admin/bookings/all", name: "All Bookings", icon: "📋" },
-//         {
-//           path: "/admin/bookings/pending",
-//           name: "Pending",
-//           icon: "⏳",
-//           badge: "5",
-//         },
-//         { path: "/admin/bookings/confirmed", name: "Confirmed", icon: "✅" },
-//         { path: "/admin/bookings/cancelled", name: "Cancelled", icon: "❌" },
-//       ],
-//     },
-//     {
-//       path: "/admin/users",
-//       name: "Users",
-//       icon: "👥",
-//       badge: "3",
-//       badgeColor: "#3498db",
-//       children: [
-//         { path: "/admin/users/all", name: "All Users", icon: "👤" },
-//         { path: "/admin/users/add", name: "Add User", icon: "➕" },
-//         { path: "/admin/users/roles", name: "Roles & Permissions", icon: "🔐" },
-//       ],
-//     },
-//     {
-//       path: "/admin/reviews",
-//       name: "Reviews",
-//       icon: "⭐",
-//       badge: "8",
-//       badgeColor: "#f1c40f",
-//     },
-//     {
-//       path: "/admin/payments",
-//       name: "Payments",
-//       icon: "💰",
-//       children: [
-//         {
-//           path: "/admin/payments/transactions",
-//           name: "Transactions",
-//           icon: "💳",
-//         },
-//         { path: "/admin/payments/pending", name: "Pending", icon: "⏳" },
-//         {
-//           path: "/admin/payments/settlements",
-//           name: "Settlements",
-//           icon: "📊",
-//         },
-//       ],
-//     },
-//     {
-//       path: "/admin/reports",
-//       name: "Reports",
-//       icon: "📈",
-//       children: [
-//         { path: "/admin/reports/sales", name: "Sales Report", icon: "📊" },
-//         { path: "/admin/reports/trekking", name: "Trekking Stats", icon: "🏔️" },
-//         { path: "/admin/reports/financial", name: "Financial", icon: "💰" },
-//       ],
-//     },
-//     {
-//       path: "/admin/settings",
-//       name: "Settings",
-//       icon: "⚙️",
-//       permissions: ["admin"],
-//       children: [
-//         { path: "/admin/settings/general", name: "General", icon: "🛠️" },
-//         { path: "/admin/settings/company", name: "Company Info", icon: "🏢" },
-//         {
-//           path: "/admin/settings/notifications",
-//           name: "Notifications",
-//           icon: "🔔",
-//         },
-//         {
-//           path: "/admin/settings/backup",
-//           name: "Backup & Restore",
-//           icon: "💾",
-//         },
-//       ],
-//     },
-//   ];
+//   const getMenuItems = useCallback((): MenuItem[] => {
+//     return [
+//       {
+//         path: "/admin/dashboard",
+//         name: "Dashboard",
+//         icon: "📊",
+//       },
+//       {
+//         path: "/admin/content",
+//         name: "Menu Management",
+//         icon: "📑",
+//         children: [
+//           { path: "/admin/menu", name: "Main Headings", icon: "📑" },
+//           { path: "/admin/headings", name: "Headings", icon: "📑" },
+//           { path: "/admin/sub-headings", name: "Sub Headings", icon: "📑" },
+//         ],
+//       },
+//       {
+//         path: "/admin/treks",
+//         name: "Treks Management",
+//         icon: "🏔️",
+//         children: [
+//           { path: "/admin/trek-package", name: "Treks Package", icon: "🗂️" },
+//           { path: "/admin/country", name: "Country", icon: "➕" },
+//           { path: "/admin/treks/categories", name: "Categories", icon: "📑" },
+//           {
+//             path: "/admin/treks/destinations",
+//             name: "Destinations",
+//             icon: "📍",
+//           },
+//         ],
+//       },
+//       {
+//         path: "/admin/bookings",
+//         name: "Bookings",
+//         icon: "📅",
+//         badge: "12",
+//         badgeColor: "#e67e22",
+//         children: [
+//           { path: "/admin/bookings/all", name: "All Bookings", icon: "📋" },
+//           {
+//             path: "/admin/bookings/pending",
+//             name: "Pending",
+//             icon: "⏳",
+//             badge: "5",
+//           },
+//           { path: "/admin/bookings/confirmed", name: "Confirmed", icon: "✅" },
+//           { path: "/admin/bookings/cancelled", name: "Cancelled", icon: "❌" },
+//         ],
+//       },
+//       {
+//         path: "/admin/users",
+//         name: "Users",
+//         icon: "👥",
+//         badge: "3",
+//         badgeColor: "#3498db",
+//         children: [
+//           { path: "/admin/users/all", name: "All Users", icon: "👤" },
+//           { path: "/admin/users/add", name: "Add User", icon: "➕" },
+//           {
+//             path: "/admin/users/roles",
+//             name: "Roles & Permissions",
+//             icon: "🔐",
+//           },
+//         ],
+//       },
+//       {
+//         path: "/admin/reviews",
+//         name: "Reviews",
+//         icon: "⭐",
+//         badge: "8",
+//         badgeColor: "#f1c40f",
+//       },
+//       {
+//         path: "/admin/payments",
+//         name: "Payments",
+//         icon: "💰",
+//         children: [
+//           {
+//             path: "/admin/payments/transactions",
+//             name: "Transactions",
+//             icon: "💳",
+//           },
+//           { path: "/admin/payments/pending", name: "Pending", icon: "⏳" },
+//           {
+//             path: "/admin/payments/settlements",
+//             name: "Settlements",
+//             icon: "📊",
+//           },
+//         ],
+//       },
+//       {
+//         path: "/admin/reports",
+//         name: "Reports",
+//         icon: "📈",
+//         children: [
+//           { path: "/admin/reports/sales", name: "Sales Report", icon: "📊" },
+//           {
+//             path: "/admin/reports/trekking",
+//             name: "Trekking Stats",
+//             icon: "🏔️",
+//           },
+//           { path: "/admin/reports/financial", name: "Financial", icon: "💰" },
+//         ],
+//       },
+//       {
+//         path: "/admin/settings",
+//         name: "Settings",
+//         icon: "⚙️",
+//         permissions: ["admin"],
+//         children: [
+//           { path: "/admin/settings/general", name: "General", icon: "🛠️" },
+//           { path: "/admin/settings/company", name: "Company Info", icon: "🏢" },
+//           {
+//             path: "/admin/settings/notifications",
+//             name: "Notifications",
+//             icon: "🔔",
+//           },
+//           {
+//             path: "/admin/settings/backup",
+//             name: "Backup & Restore",
+//             icon: "💾",
+//           },
+//         ],
+//       },
+//     ];
+//   }, []);
+
+//   const menuItems = getMenuItems();
 
 //   const renderMenuItem = (item: MenuItem, index: number) => {
 //     const hasChildren = item.children && item.children.length > 0;
@@ -220,7 +286,7 @@
 //             )}
 //             <span className={`arrow ${isExpanded ? "expanded" : ""}`}>▼</span>
 //           </div>
-//           {isExpanded && (
+//           {/* {isExpanded && item.children && (
 //             <ul className="submenu">
 //               {item.children.map((child, childIndex) => {
 //                 const isChildActive = pathname === child.path;
@@ -230,6 +296,38 @@
 //                       href={child.path}
 //                       className={`submenu-link ${isChildActive ? "active" : ""}`}
 //                       onClick={isMobile ? onClose : undefined}
+//                       prefetch={false}
+//                     >
+//                       <span className="menu-icon">{child.icon}</span>
+//                       <span className="menu-text">{child.name}</span>
+//                       {child.badge && (
+//                         <span
+//                           className="badge small"
+//                           style={{
+//                             backgroundColor: child.badgeColor || "#e67e22",
+//                           }}
+//                         >
+//                           {child.badge}
+//                         </span>
+//                       )}
+//                     </Link>
+//                   </li>
+//                 );
+//               })}
+//             </ul>
+//           )} */}
+
+//           {isExpanded && item.children && (
+//             <ul className="submenu">
+//               {item.children.map((child, childIndex) => {
+//                 const isChildActive = pathname === child.path;
+//                 return (
+//                   <li key={childIndex}>
+//                     <Link
+//                       href={child.path}
+//                       className={`submenu-link ${isChildActive ? "active" : ""}`}
+//                       onClick={isMobile ? onClose : undefined}
+//                       prefetch={false}
 //                     >
 //                       <span className="menu-icon">{child.icon}</span>
 //                       <span className="menu-text">{child.name}</span>
@@ -259,6 +357,7 @@
 //           href={item.path}
 //           className={`menu-link ${isActive ? "active" : ""}`}
 //           onClick={isMobile ? onClose : undefined}
+//           prefetch={false}
 //         >
 //           <span className="menu-icon">{item.icon}</span>
 //           <span className="menu-text">{item.name}</span>
@@ -333,6 +432,7 @@
 //           box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
 //           overflow-y: auto;
 //           overflow-x: hidden;
+//           will-change: transform;
 //         }
 
 //         .admin-sidebar::-webkit-scrollbar {
@@ -696,7 +796,8 @@
 
 // export default Sidebar;
 
-//--------------------------------------------------------end
+
+//-------------------------------------------------------------------end
 
 // "use client";
 
@@ -1510,8 +1611,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     return null;
   }
 
+  // Set mounted to true on client side only
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Load expanded menus from localStorage on mount
   useEffect(() => {
+    if (!mounted) return;
+
     const savedExpandedMenus = localStorage.getItem("sidebarExpandedMenus");
     if (savedExpandedMenus) {
       try {
@@ -1521,15 +1629,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         console.error("Error loading expanded menus:", e);
       }
     }
-  }, []);
+  }, [mounted]);
 
   // Save expanded menus to localStorage when they change
   useEffect(() => {
+    if (!mounted) return;
     localStorage.setItem("sidebarExpandedMenus", JSON.stringify(expandedMenus));
-  }, [expandedMenus]);
+  }, [expandedMenus, mounted]);
 
   // Handle window resize
   useEffect(() => {
+    if (!mounted) return;
+
     const handleResize = () => {
       const width = window.innerWidth;
       const isMobileView = width <= 768;
@@ -1543,10 +1654,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, mounted]);
 
   // Auto-expand menus based on current path
   useEffect(() => {
+    if (!mounted) return;
+
     const menuItems = getMenuItems();
     const newExpandedMenus: string[] = [];
 
@@ -1572,10 +1685,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         return combined;
       });
     }
-  }, [pathname]);
+  }, [pathname, mounted]);
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {
+    if (!mounted) return;
+
     const handleClickOutside = (e: MouseEvent) => {
       if (isMobile && isOpen) {
         const sidebar = document.getElementById("admin-sidebar");
@@ -1594,7 +1709,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isMobile, isOpen, onClose]);
+  }, [isMobile, isOpen, onClose, mounted]);
 
   const toggleSubmenu = useCallback((menuName: string) => {
     setExpandedMenus((prev) =>
@@ -1763,6 +1878,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             )}
             <span className={`arrow ${isExpanded ? "expanded" : ""}`}>▼</span>
           </div>
+<<<<<<< HEAD:next_frontend/src/app/components/admin/Sidebar.tsx
+=======
+          {/* Fixed: Added item.children check */}
+>>>>>>> d23af9b12027ea7755015847a8b59c4b3ec3ebd7:next_frontend/src/pages/admin/Sidebar.tsx
           {isExpanded && item.children && (
             <ul className="submenu">
               {item.children.map((child, childIndex) => {
@@ -1822,6 +1941,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const menuItems = getMenuItems();
 
+<<<<<<< HEAD:next_frontend/src/app/components/admin/Sidebar.tsx
+=======
+  // Don't render anything during build/SSR
+  if (!mounted) {
+    return null;
+  }
+
+>>>>>>> d23af9b12027ea7755015847a8b59c4b3ec3ebd7:next_frontend/src/pages/admin/Sidebar.tsx
   return (
     <>
       {/* Styles and JSX content - same as before */}
