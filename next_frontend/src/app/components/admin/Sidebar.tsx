@@ -1568,9 +1568,6 @@
 
 //------------------------------------------------------------------------end
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -1878,10 +1875,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             )}
             <span className={`arrow ${isExpanded ? "expanded" : ""}`}>▼</span>
           </div>
-<<<<<<< HEAD:next_frontend/src/app/components/admin/Sidebar.tsx
-=======
-          {/* Fixed: Added item.children check */}
->>>>>>> d23af9b12027ea7755015847a8b59c4b3ec3ebd7:next_frontend/src/pages/admin/Sidebar.tsx
           {isExpanded && item.children && (
             <ul className="submenu">
               {item.children.map((child, childIndex) => {
@@ -1941,14 +1934,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const menuItems = getMenuItems();
 
-<<<<<<< HEAD:next_frontend/src/app/components/admin/Sidebar.tsx
-=======
-  // Don't render anything during build/SSR
-  if (!mounted) {
-    return null;
-  }
-
->>>>>>> d23af9b12027ea7755015847a8b59c4b3ec3ebd7:next_frontend/src/pages/admin/Sidebar.tsx
   return (
     <>
       {/* Styles and JSX content - same as before */}
